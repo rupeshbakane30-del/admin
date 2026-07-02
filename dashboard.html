@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="description" content="Admin dashboard for managing users, credits, and platform activity">
+  <meta name="theme-color" content="#2f81f7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Admin Dashboard">
+  <meta name="format-detection" content="telephone=no">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="assets/styles.css?v=20260527-2">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%232f81f7' width='100' height='100'/><text x='50' y='60' font-size='60' font-weight='bold' fill='white' text-anchor='middle' font-family='system-ui'>A</text></svg>">
+  <style>
+    input[type="email"],
+    input[type="password"],
+    input[type="text"],
+    input[type="number"],
+    input[type="datetime-local"],
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+
+    button,
+    input[type="submit"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="logo" href="dashboard.html" aria-label="Admin dashboard home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
+        <span>Admin</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#overview" class="nav-active" aria-current="page">Overview</a>
+        <a href="#actions">Actions</a>
+        <a href="#platform-data">Data</a>
+        <button type="button" class="btn-light nav-button" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" role="main">
+    <section id="overview" class="hero-panel">
+      <div>
+        <span class="eyebrow">Operations Center</span>
+        <h1>Admin Dashboard</h1>
+        <p class="header-subtitle">Monitor conversions, manage access, and handle credits from one place.</p>
+        <p class="refresh-meta">Last refreshed: <span id="lastRefreshed">Not yet loaded</span></p>
+      </div>
+      <div class="hero-actions">
+        <button type="button" class="btn-secondary" id="refreshButton">Refresh Data</button>
+      </div>
+    </section>
+
+    <div id="msg" class="msg" role="alert" aria-live="polite" aria-atomic="true"></div>
+
+    <section class="stats-grid" aria-label="Dashboard statistics">
+      <article class="stat-card">
+        <div class="stat-icon" aria-hidden="true">Users</div>
+        <div class="stat-content">
+          <p class="stat-label">Total Users</p>
+          <p class="stat-value" id="total_users">--</p>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-icon" aria-hidden="true">INR</div>
+        <div class="stat-content">
+          <p class="stat-label">Revenue</p>
+          <p class="stat-value" id="total_revenue">Rs 0</p>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-icon" aria-hidden="true">Jobs</div>
+        <div class="stat-content">
+          <p class="stat-label">PDFs Converted</p>
+          <p class="stat-value" id="total_conversions">--</p>
+        </div>
+      </article>
+
+      <article class="stat-card error">
+        <div class="stat-icon" aria-hidden="true">Risk</div>
+        <div class="stat-content">
+          <p class="stat-label">Failed Jobs</p>
+          <p class="stat-value" id="failed_jobs">--</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="summary-strip" aria-label="Admin quick notes">
+      <div class="summary-card">
+        <h2>Workflow</h2>
+        <p>User and admin frontends call the Worker backend. Worker then coordinates jobs with Hugging Face.</p>
+      </div>
+      <div class="summary-card">
+        <h2>Free Access</h2>
+        <p>Use expiry with free access to create temporary IDs without charging page credits.</p>
+      </div>
+      <div class="summary-card">
+        <h2>Credits</h2>
+        <p>Credits are only deducted when downloadable output is requested through the Worker backend.</p>
+      </div>
+    </section>
+
+    <section id="actions" class="actions-section" aria-label="Admin actions">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Control Panel</span>
+          <h2>Admin Actions</h2>
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <div class="card-header">
+            <h3>Create User / Free Access ID</h3>
+          </div>
+          <div class="card-body">
+            <form id="createUserForm" class="stack-form">
+              <input id="newName" placeholder="Full Name" required aria-label="User name">
+              <input id="newEmail" type="email" placeholder="Gmail address only" required aria-label="User email">
+              <input id="newPassword" type="password" placeholder="Password (min 6 chars)" required aria-label="User password">
+              <input id="newCredits" type="number" min="0" value="0" placeholder="Initial credits" aria-label="Initial credits">
+              <label class="checkbox-label">
+                <input id="newFreeAccess" type="checkbox" aria-label="Free full website access">
+                <span>Free full website access</span>
+              </label>
+              <input id="newExpiresAt" type="datetime-local" placeholder="Expiry time" aria-label="Access expiry time">
+              <select id="newRole" aria-label="User role">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+              <button type="submit" class="btn-primary">Create User</button>
+            </form>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h3>Add Free Credits</h3>
+          </div>
+          <div class="card-body">
+            <form id="addCreditsForm" class="stack-form">
+              <input id="creditEmail" type="email" placeholder="User Gmail address" required aria-label="User email for credits">
+              <input id="creditAmount" type="number" min="1" value="1" placeholder="Credits amount" required aria-label="Number of credits">
+              <input id="creditNote" placeholder="Note" value="Admin free credit" aria-label="Credit note">
+              <button type="submit" class="btn-primary">Add Credits</button>
+            </form>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h3>Set User Free Access / Expiry</h3>
+          </div>
+          <div class="card-body">
+            <form id="updateAccessForm" class="stack-form">
+              <input id="accessEmail" type="email" placeholder="User Gmail address" required aria-label="User email for access update">
+              <label class="checkbox-label">
+                <input id="accessFree" type="checkbox" aria-label="Enable free full access">
+                <span>Enable free full access</span>
+              </label>
+              <input id="accessExpiresAt" type="datetime-local" aria-label="New access expiry time">
+              <button type="submit" class="btn-primary">Update Access</button>
+            </form>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h3>Website Message</h3>
+          </div>
+          <div class="card-body">
+            <form id="siteMessageForm" class="stack-form">
+              <input id="msgTitle" placeholder="Message title" aria-label="Message title">
+              <textarea id="msgBody" placeholder="Message body (optional)" aria-label="Message body"></textarea>
+              <label class="checkbox-label">
+                <input id="msgEnabled" type="checkbox" aria-label="Show on user website">
+                <span>Show on user website</span>
+              </label>
+              <button type="submit" class="btn-primary">Save Message</button>
+            </form>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="platform-data" class="tables-section" aria-label="Platform data">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Live Data</span>
+          <h2>Platform Data</h2>
+        </div>
+      </div>
+
+      <section class="card">
+        <div class="card-header">
+          <h3>Users</h3>
+        </div>
+        <div class="card-body">
+          <div id="users" role="region" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h3>Payments</h3>
+        </div>
+        <div class="card-body">
+          <div id="payments" role="region" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h3>Conversions</h3>
+        </div>
+        <div class="card-body">
+          <div id="conversions" role="region" aria-live="polite"></div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="assets/admin.js?v=20260527-2"></script>
+  <script>
+    const forms = {
+      createUser: document.getElementById("createUserForm"),
+      addCredits: document.getElementById("addCreditsForm"),
+      updateAccess: document.getElementById("updateAccessForm"),
+      siteMessage: document.getElementById("siteMessageForm")
+    };
+
+    const refreshButton = document.getElementById("refreshButton");
+
+    function localToISO(value) {
+      return value ? new Date(value).toISOString() : null;
+    }
+
+    function resetCreateUserForm() {
+      forms.createUser.reset();
+      document.getElementById("newCredits").value = "0";
+      document.getElementById("newRole").value = "user";
+    }
+
+    function resetAddCreditsForm() {
+      forms.addCredits.reset();
+      document.getElementById("creditAmount").value = "1";
+      document.getElementById("creditNote").value = "Admin free credit";
+    }
+
+    async function createUser() {
+      const name = document.getElementById("newName").value.trim();
+      const email = document.getElementById("newEmail").value.trim().toLowerCase();
+      const password = document.getElementById("newPassword").value;
+
+      if (!name) return setMsg("Name is required", false);
+      if (!email) return setMsg("Gmail address is required", false);
+      if (!email.endsWith("@gmail.com")) return setMsg("Only @gmail.com email allowed", false);
+      if (!password) return setMsg("Password is required", false);
+      if (password.length < 6) return setMsg("Password must be at least 6 characters", false);
+
+      await api("/api/admin/create-user", {
+        method: "POST",
+        json: {
+          name,
+          email,
+          password,
+          credits: Number(document.getElementById("newCredits").value || 0),
+          free_access: document.getElementById("newFreeAccess").checked,
+          expires_at: localToISO(document.getElementById("newExpiresAt").value),
+          role: document.getElementById("newRole").value
+        }
+      });
+
+      resetCreateUserForm();
+      setMsg("User created successfully", true);
+      await loadDashboard();
+    }
+
+    async function addCredits() {
+      await api("/api/admin/add-credits", {
+        method: "POST",
+        json: {
+          email: document.getElementById("creditEmail").value.trim().toLowerCase(),
+          credits: Number(document.getElementById("creditAmount").value || 0),
+          note: document.getElementById("creditNote").value.trim()
+        }
+      });
+
+      resetAddCreditsForm();
+      setMsg("Credits added successfully", true);
+      await loadDashboard();
+    }
+
+    async function updateAccess() {
+      await api("/api/admin/update-access", {
+        method: "POST",
+        json: {
+          email: document.getElementById("accessEmail").value.trim().toLowerCase(),
+          free_access: document.getElementById("accessFree").checked,
+          expires_at: localToISO(document.getElementById("accessExpiresAt").value)
+        }
+      });
+
+      forms.updateAccess.reset();
+      setMsg("Access updated successfully", true);
+      await loadDashboard();
+    }
+
+    async function saveSiteMessage() {
+      await api("/api/admin/site-message", {
+        method: "POST",
+        json: {
+          title: document.getElementById("msgTitle").value.trim(),
+          body: document.getElementById("msgBody").value.trim(),
+          enabled: document.getElementById("msgEnabled").checked
+        }
+      });
+
+      setMsg("Website message saved successfully", true);
+    }
+
+    async function loadDashboard() {
+      refreshButton.disabled = true;
+      refreshButton.textContent = "Refreshing...";
+
+      try {
+        const me = await api("/api/me");
+        if (!me.user || me.user.role !== "admin") {
+          throw new Error("Admin access denied");
+        }
+
+        const [summary, usersData, paymentsData, conversionsData, siteMessage] = await Promise.all([
+          api("/api/admin/summary"),
+          api("/api/admin/users"),
+          api("/api/admin/payments"),
+          api("/api/admin/conversions"),
+          api("/api/site-message")
+        ]);
+
+        document.getElementById("total_users").textContent = summary.total_users ?? 0;
+        document.getElementById("total_revenue").textContent = formatCurrency(summary.total_revenue || 0);
+        document.getElementById("total_conversions").textContent = summary.total_conversions ?? 0;
+        document.getElementById("failed_jobs").textContent = summary.failed_jobs ?? 0;
+
+        table(document.getElementById("users"), usersData.users);
+        table(document.getElementById("payments"), paymentsData.payments);
+        table(document.getElementById("conversions"), conversionsData.conversions);
+        document.getElementById("lastRefreshed").textContent = new Date().toLocaleString("en-IN");
+
+        if (siteMessage.message) {
+          document.getElementById("msgTitle").value = siteMessage.message.title || "";
+          document.getElementById("msgBody").value = siteMessage.message.body || "";
+          document.getElementById("msgEnabled").checked = !!siteMessage.message.enabled;
+        }
+      } catch (error) {
+        setMsg(error.message || "Could not load dashboard", false);
+      } finally {
+        refreshButton.disabled = false;
+        refreshButton.textContent = "Refresh Data";
+      }
+    }
+
+    wireFormSubmit(forms.createUser, createUser);
+    wireFormSubmit(forms.addCredits, addCredits);
+    wireFormSubmit(forms.updateAccess, updateAccess);
+    wireFormSubmit(forms.siteMessage, saveSiteMessage);
+
+    refreshButton.addEventListener("click", () => {
+      loadDashboard();
+    });
+
+    loadDashboard();
+  </script>
+  <noscript>
+    <p>JavaScript is required to use this application. Please enable JavaScript in your browser settings.</p>
+  </noscript>
+</body>
+</html>
