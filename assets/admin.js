@@ -1,4 +1,4 @@
-const API_BASE = "https://api.tallyxml.online";
+const API_BASE = "https://api.mytaxflow.online";
 const TABLE_PAGE_SIZE = 20;
 
 let msgTimer = null;
