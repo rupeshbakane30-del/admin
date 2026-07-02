@@ -1,5 +1,5 @@
 
-const API_BASE = "https://api.tallyxml.online";
+const API_BASE = "https://api.mytaxflow.online";
 
 function setToken(token){
   document.cookie=`admin_token=${encodeURIComponent(token)}; path=/; max-age=${7*24*60*60}`;
