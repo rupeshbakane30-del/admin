@@ -371,33 +371,38 @@ code {
   letter-spacing: -0.03em;
 }
 
-.revenue-breakdown {
-  display: grid;
-  gap: 8px;
-  min-width: 0;
-}
-
-.revenue-breakdown div {
+.stat-label-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
+  gap: 10px;
+  margin-bottom: 8px;
 }
 
-.revenue-breakdown span {
-  color: var(--muted);
+.stat-label-row .stat-label {
+  margin-bottom: 0;
+}
+
+.mini-select {
+  min-height: 32px;
+  max-width: 104px;
+  padding: 5px 24px 5px 10px;
+  border: 1px solid rgba(47, 129, 247, 0.38);
+  border-radius: 10px;
+  background: rgba(47, 129, 247, 0.12);
+  color: var(--text);
   font-size: 12px;
   font-weight: 700;
+  outline: none;
 }
 
-.revenue-breakdown strong {
-  color: var(--text);
-  font-size: 15px;
-  font-weight: 800;
-  white-space: nowrap;
+.mini-select:focus {
+  border-color: rgba(47, 129, 247, 0.85);
+  box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.16);
+}
+
+.mini-select option {
+  color: #0f172a;
 }
 
 .actions-section,
