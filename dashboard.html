@@ -428,7 +428,9 @@
             "completed_at"
           ]
         });
-        document.getElementById("lastRefreshed").textContent = new Date().toLocaleString("en-IN");
+        document.getElementById("lastRefreshed").textContent = new Date().toLocaleString("en-IN", {
+          timeZone: "Asia/Kolkata"
+        });
 
         if (siteMessage.message) {
           document.getElementById("msgTitle").value = siteMessage.message.title || "";
