@@ -450,7 +450,8 @@
           ]
         });
         document.getElementById("lastRefreshed").textContent = new Date().toLocaleString("en-IN", {
-          timeZone: "Asia/Kolkata"
+          timeZone: "Asia/Kolkata",
+          hour12: true
         });
 
         if (siteMessage.message) {
