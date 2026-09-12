@@ -130,7 +130,9 @@ function renderTable(el) {
   const state = tableState.get(el);
   if (!state) return;
 
-  const headers = state.rows.length ? Object.keys(state.rows[0]) : [];
+  const headers = state.columns?.length
+    ? state.columns
+    : Array.from(new Set(state.rows.flatMap(row => Object.keys(row))));
   const query = state.query.trim().toLowerCase();
   const filteredRows = !query
     ? state.rows
@@ -245,10 +247,11 @@ function renderTable(el) {
   });
 }
 
-function table(el, rows) {
+function table(el, rows, options = {}) {
   if (!el) return;
   tableState.set(el, {
     rows: Array.isArray(rows) ? rows : [],
+    columns: Array.isArray(options.columns) ? options.columns : null,
     page: 1,
     query: ""
   });
