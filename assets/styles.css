@@ -371,6 +371,35 @@ code {
   letter-spacing: -0.03em;
 }
 
+.revenue-breakdown {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.revenue-breakdown div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.revenue-breakdown span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.revenue-breakdown strong {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .actions-section,
 .tables-section {
   margin-bottom: 34px;

@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-title" content="Admin Dashboard">
   <meta name="format-detection" content="telephone=no">
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="assets/styles.css?v=20260912-conversion-errors">
+  <link rel="stylesheet" href="assets/styles.css?v=20260912-revenue-periods">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%232f81f7' width='100' height='100'/><text x='50' y='60' font-size='60' font-weight='bold' fill='white' text-anchor='middle' font-family='system-ui'>A</text></svg>">
   <style>
     input[type="email"],
@@ -84,8 +84,21 @@
       <article class="stat-card">
         <div class="stat-icon" aria-hidden="true">Today</div>
         <div class="stat-content">
-          <p class="stat-label">Today Revenue</p>
-          <p class="stat-value" id="daily_revenue">Rs 0</p>
+          <p class="stat-label">Revenue Periods</p>
+          <div class="revenue-breakdown" aria-label="Revenue by period">
+            <div>
+              <span>Daily</span>
+              <strong id="daily_revenue">Rs 0</strong>
+            </div>
+            <div>
+              <span>Weekly</span>
+              <strong id="weekly_revenue">Rs 0</strong>
+            </div>
+            <div>
+              <span>Monthly</span>
+              <strong id="monthly_revenue">Rs 0</strong>
+            </div>
+          </div>
         </div>
       </article>
 
@@ -257,7 +270,7 @@
     </section>
   </main>
 
-  <script src="assets/admin.js?v=20260912-conversion-errors"></script>
+  <script src="assets/admin.js?v=20260912-revenue-periods"></script>
   <script>
     const forms = {
       createUser: document.getElementById("createUserForm"),
@@ -377,6 +390,8 @@
         document.getElementById("total_users").textContent = summary.total_users ?? 0;
         document.getElementById("total_revenue").textContent = formatCurrency(summary.total_revenue || 0);
         document.getElementById("daily_revenue").textContent = formatCurrency(summary.daily_revenue || 0);
+        document.getElementById("weekly_revenue").textContent = formatCurrency(summary.weekly_revenue || 0);
+        document.getElementById("monthly_revenue").textContent = formatCurrency(summary.monthly_revenue || 0);
         document.getElementById("daily_users").textContent = summary.daily_users ?? 0;
         document.getElementById("active_users").textContent = summary.active_users ?? 0;
         document.getElementById("total_conversions").textContent = summary.total_conversions ?? 0;
